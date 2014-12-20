@@ -1,9 +1,7 @@
 package assets
 
 import java.text.{DecimalFormat, SimpleDateFormat}
-import java.util.{Date, TimeZone, NoSuchElementException}
-
-import play.utils.UriEncoding
+import java.util.{Date, NoSuchElementException}
 
 import scala.collection.SortedMap
 
@@ -11,7 +9,7 @@ import scala.collection.SortedMap
  * Created by oscar on 12/17/14.
  */
 object QueryFromRequest {
-    def get (path: String, queryString: Map[String, Seq[String]]) : Query = {
+    def Get (path: String, queryString: Map[String, Seq[String]]) : Query = {
         //Build the query ID string from the base path and the query string.
         val queryId = path + "?" + (SortedMap.empty[String, Seq[String]] ++ queryString.filter(_._1 != "timeRange"))
             .map(k => k._1 + "=" + k._2.mkString).mkString("&")
@@ -46,11 +44,4 @@ case class Query ( QueryId: String, Range: TimeRange ) {
     def Uri (prefix:String): String = prefix + QueryId + "&timeRange=" + Range.UriEncode
 }
 
-case class TimeRange ( From: Long, To: Long) {
-    def UriEncode (): String = {
-        val dFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
-        dFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        UriEncoding.encodePathSegment(Seq(From, To).map(d => dFormat.format(d)).mkString("~"), "UTF-8")
-    }
-}
