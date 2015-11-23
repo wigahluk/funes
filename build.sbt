@@ -1,19 +1,13 @@
-import play.PlayScala
+name := """funes"""
 
-name := "funes"
-
-version := "0.1"
-
-scalaVersion := Option(System.getProperty("scala.version")).getOrElse("2.11.1")
-
-libraryDependencies ++= Seq(
-  "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka23"
-)
-
-libraryDependencies ++= Seq (
-  "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.0.akka23"
-)
-
-libraryDependencies += ws
+version := "1.0.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+scalaVersion := Option(System.getProperty("scala.version")).getOrElse("2.11.7")
+
+libraryDependencies ++= Seq(
+    ws,
+    specs2 % Test,
+    "com.github.nscala-time" %% "nscala-time" % "2.6.0"
+)

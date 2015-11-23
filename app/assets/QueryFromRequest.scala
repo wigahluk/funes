@@ -26,22 +26,22 @@ object QueryFromRequest {
         } catch {
             case e : NoSuchElementException => { tzo = " +0000" }
         }
-        var rangeArray = Seq(new Date().getTime, new Date().getTime - (1000 * 60 * 60))
-        try {
-            rangeArray = queryString("timeRange").mkString.split("~")
-                .map(sDate => new SimpleDateFormat("MM/dd/yyyy HH:mm:ss Z").parse(sDate + tzo).getTime)
-        } catch {
-            case e: NoSuchElementException => {}
+
+        def range (vs: Option[Seq[String]]): Seq[Long] = vs match {
+            case Some(s) => s.mkString.split("~").map(sDate => new SimpleDateFormat("MM/dd/yyyy HH:mm:ss Z").parse(sDate + tzo).getTime)
+            case None => Seq(new Date().getTime, new Date().getTime - (1000 * 60 * 60))
         }
 
-        Query(queryId, TimeRange(rangeArray(0),rangeArray(1)))
+        val rangeArray = range(queryString.get("timeRange"))
+
+        Query(queryId, Segment(rangeArray(0),rangeArray(1)))
     }
 
 }
 
-case class Query ( QueryId: String, Range: TimeRange ) {
-    def Uri (): String = QueryId + "&timeRange=" + Range.UriEncode
-    def Uri (prefix:String): String = prefix + QueryId + "&timeRange=" + Range.UriEncode
+case class Query ( QueryId: String, Range: Segment ) {
+    def Uri (prefix:String): String = prefix + QueryId + "&timeRange=" + Range.uriEncode
+    def Uri (): String = Uri("")
 }
 
 
